@@ -1,0 +1,69 @@
+security:
+    encoders:
+        #for db_provider
+        App\Entity\User: bcrypt
+        #for in_memory
+        Symfony\Component\Security\Core\User\User: bcrypt
+        Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser: bcrypt
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        #our providers
+        chain_providers:
+            chain:
+                providers: [ in_memory, db_provider, jwt ]
+        in_memory:
+            memory:
+                users:
+                    adminlocal: { password: $2y$13$WmhdMxxLExL1AT/jJZIj6e6f2iJaG1BiNiKx4D7pGgxb6Q/2ud71S, roles: [ ROLE_ADMIN ], name: AdminLocal}
+        db_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+        jwt:
+            lexik_jwt: ~
+    firewalls:
+        login:
+            pattern:  ^/api/login
+            stateless: true
+            provider: db_provider
+            anonymous: true
+            json_login:
+                check_path: /api/login_check
+                username_path: username
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        refresh:
+            pattern:  ^/api/token/refresh
+            stateless: true
+            anonymous: true
+        api:
+            pattern:   ^/api
+            stateless: true
+            anonymous: true
+            provider: db_provider
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+            # activate different ways to authenticate
+
+            # http_basic: true
+            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+
+            # form_login: true
+            # https://symfony.com/doc/current/security/form_login_setup.html
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+         - { path: ^/admin, roles: ROLE_ADMIN }
+         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        # - { path: ^/profile, roles: ROLE_USER }
+    role_hierarchy:
+        ROLE_MODERATOR: [ROLE_USER]
+        ROLE_ADMIN: [ROLE_USER,ROLE_MODERATOR,ROLE_ALLOWED_TO_SWITCH,ROLE_PREVIOUS_ADMIN]
