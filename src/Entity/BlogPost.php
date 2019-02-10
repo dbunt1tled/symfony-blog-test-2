@@ -3,21 +3,37 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     itemOperations={"get"},
- *     collectionOperations={"get"}
+ *     itemOperations={
+ *      "get",
+ *      "put" = {
+ *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"
+ *          }
+ *     },
+ *     collectionOperations={
+ *      "get",
+ *      "post" = {
+ *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY')"
+ *          }
+ *      },
+ *     denormalizationContext={
+ *          "group" = {"post"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
  * @UniqueEntity("slug")
  * @ORM\HasLifecycleCallbacks
  */
-class BlogPost
+class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
 {
     /**
      * @ORM\Id()
@@ -28,16 +44,19 @@ class BlogPost
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"post"})
      */
     private $content;
 
     /**
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     * @Groups({"post"})
      */
     private $slug;
 
@@ -55,6 +74,7 @@ class BlogPost
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
      * @ORM\JoinColumn(nullable=false)
+     * @ApiSubresource()
      */
     private $comments;
 
@@ -109,7 +129,7 @@ class BlogPost
         return $this->published;
     }
 
-    public function setPublished(\DateTimeImmutable $published): self
+    public function setPublished(\DateTimeImmutable $published): PublishedDateEntityInterface
     {
         $this->published = $published;
 
@@ -121,7 +141,7 @@ class BlogPost
         return $this->author;
     }
 
-    public function setAuthor(?User $author): self
+    public function setAuthor(?UserInterface $author): AuthoredEntityInterface
     {
         $this->author = $author;
 

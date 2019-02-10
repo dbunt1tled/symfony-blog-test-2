@@ -13,11 +13,31 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
- *     itemOperations={"get"},
- *     collectionOperations={"post"},
- *     normalizationContext={
-            "groups"={"read"}
- *     }
+ *     itemOperations={
+ *          "get" = {
+ *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *              "normalization_context"={
+ *                  "groups"={"get"}
+ *              }
+ *          },
+ *          "put" = {
+ *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object == user",
+ *              "denormalization_context"={
+ *                  "groups"={"put"}
+ *              }
+ *          }
+ *      },
+ *     collectionOperations={
+ *          "post" = {
+ *              "denormalization_context"={
+ *                  "groups"={"post"}
+ *              },
+ *              "normalization_context"={
+ *                  "groups"={"get"}
+ *              }
+ *          }
+ *      },
+ *
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity("email")
@@ -32,7 +52,7 @@ class User implements UserInterface, \Serializable
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $id;
 
@@ -41,12 +61,13 @@ class User implements UserInterface, \Serializable
      * @Assert\NotBlank(
      *     message="Passord not be empty"
      * )
-     * @Groups({"read"})
+     * @Groups({"get", "post", "put"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"put", "post"})
      */
     private $password;
 
@@ -60,10 +81,7 @@ class User implements UserInterface, \Serializable
      *     max=255,
      *     minMessage="Min 6 symbols"
      * )
-     * @Assert\Regex(
-     *     pattern="/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]),{7,}/",
-     *     message="Password must be seven characters long and contain at least one digit, one upper case letter and lower case letter"
-     * )
+     * @Groups({"put", "post"})
      */
     private $plainPassword;
 
@@ -73,10 +91,7 @@ class User implements UserInterface, \Serializable
      *     "this.getPlainPassword() === this.getRetypedPassword()",
      *     message="Passwords does not match"
      * )
-     * @Assert\Regex(
-     *     pattern="/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]),{7,}/",
-     *     message="Password must be seven characters long and contain at least one digit, one upper case letter and lower case letter"
-     * )
+     * @Groups({"put", "post"})
      */
     private $retypedPassword;
 
@@ -89,7 +104,7 @@ class User implements UserInterface, \Serializable
      * @Assert\Email(
      *     message="Email has wrong format"
      * )
-     * @Groups({"read"})
+     * @Groups({"put", "post"})
      */
     private $email;
 
@@ -101,14 +116,14 @@ class User implements UserInterface, \Serializable
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\BlogPost", mappedBy="author")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $blogPosts;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $comments;
 
@@ -284,7 +299,7 @@ class User implements UserInterface, \Serializable
     {
     }
 
-    public function getRetypedPassword(): string
+    public function getRetypedPassword(): ?string
     {
         return $this->retypedPassword;
     }

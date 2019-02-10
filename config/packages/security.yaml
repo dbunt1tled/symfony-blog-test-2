@@ -62,7 +62,7 @@ security:
          - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+         - { path: ^/api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/profile, roles: ROLE_USER }
     role_hierarchy:
         ROLE_MODERATOR: [ROLE_USER]

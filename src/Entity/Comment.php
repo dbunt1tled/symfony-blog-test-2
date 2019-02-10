@@ -4,15 +4,31 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     itemOperations={"get"},
- *     collectionOperations={"get"}
+ *     itemOperations={
+ *      "get",
+ *      "put" = {
+ *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"
+ *          }
+ *     },
+ *     collectionOperations={
+ *      "get",
+ *      "post" = {
+ *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY')"
+ *          }
+ *      },
+ *     denormalizationContext={
+ *          "group" = {"post"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
+ * @ORM\HasLifecycleCallbacks
  */
-class Comment
+class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
 {
     /**
      * @ORM\Id()
@@ -23,6 +39,7 @@ class Comment
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"post"})
      */
     private $content;
 
@@ -40,6 +57,7 @@ class Comment
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\BlogPost", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post"})
      */
     private $blogPost;
 
@@ -65,7 +83,7 @@ class Comment
         return $this->published;
     }
 
-    public function setPublished(\DateTimeImmutable $published): self
+    public function setPublished(\DateTimeImmutable $published): PublishedDateEntityInterface
     {
         $this->published = $published;
 
@@ -77,7 +95,7 @@ class Comment
         return $this->author;
     }
 
-    public function setAuthor(?User $author): self
+    public function setAuthor(?UserInterface $author): AuthoredEntityInterface
     {
         $this->author = $author;
 
