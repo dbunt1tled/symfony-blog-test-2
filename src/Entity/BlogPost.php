@@ -14,15 +14,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     itemOperations={
- *      "get",
+ *      "get" = {
+ *         "normalization_context"={
+ *                  "groups"={"get-blog-post-with-author"}
+ *              }
+ *       },
  *      "put" = {
- *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"
+ *              "access_control"="is_granted('ROLE_MODERATOR') or is_granted('ROLE_USER') and object.getAuthor() == user"
  *          }
  *     },
  *     collectionOperations={
  *      "get",
  *      "post" = {
- *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY')"
+ *              "access_control"="is_granted('ROLE_USER')"
  *          }
  *      },
  *     denormalizationContext={
@@ -39,35 +43,39 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"get-blog-post-with-author"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"post"})
+     * @Groups({"post", "get-blog-post-with-author"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"post"})
+     * @Groups({"post", "get-blog-post-with-author"})
      */
     private $content;
 
     /**
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
-     * @Groups({"post"})
+     * @Groups({"post", "get-blog-post-with-author"})
+     *
      */
     private $slug;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"get-blog-post-with-author"})
      */
     private $published;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="blogPosts")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"get-blog-post-with-author"})
      */
     private $author;
 
@@ -75,6 +83,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
      * @ORM\JoinColumn(nullable=false)
      * @ApiSubresource()
+     * @Groups({"get-blog-post-with-author"})
      */
     private $comments;
 

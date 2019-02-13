@@ -66,6 +66,7 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.1",
         "fzaninotto/faker": "^1.8",
-        "symfony/maker-bundle": "^1.11"
+        "symfony/maker-bundle": "^1.11",
+        "symfony/var-dumper": "4.2.*"
     }
 }
