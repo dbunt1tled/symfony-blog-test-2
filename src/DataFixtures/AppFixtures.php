@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\BlogPost;
 use App\Entity\Comment;
 use App\Entity\User;
+use App\Security\TokenGenerator;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Faker\Factory;
@@ -17,11 +18,14 @@ final class AppFixtures extends Fixture
 
     private $userReferences = [];
     private $postReferences = [];
+    /** @var TokenGenerator */
+    private $tokenGenerator;
 
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordEncoderInterface $encoder, TokenGenerator $tokenGenerator)
     {
         $this->passwordEncoder = $encoder;
         $this->faker = Factory::create('en_US');
+        $this->tokenGenerator = $tokenGenerator;
     }
 
     public function load(ObjectManager $manager): void
@@ -48,7 +52,11 @@ final class AppFixtures extends Fixture
                 ->setEmail($this->faker->unique()->email)
                 ->setPlainPassword('12345678')
                 ->setPassword($this->passwordEncoder->encodePassword($user, $user->getPlainPassword()))
+                ->setEnabled($this->faker->boolean)
                 ->setRoles([User::ROLE_USER]);
+            if (!$user->getEnabled()) {
+                $user->setConfirmationToken($this->tokenGenerator->getRandomSecureToken(40));
+            }
             $manager->persist($user);
             $this->addReference($user->getUsername(),$user);
             $this->userReferences[] = $user->getUsername();

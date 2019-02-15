@@ -27,6 +27,7 @@ security:
             stateless: true
             provider: db_provider
             anonymous: true
+            user_checker: App\Security\UserEnabledChecker
             json_login:
                 check_path: /api/login_check
                 username_path: username
@@ -37,7 +38,8 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         refresh:
-            pattern:  ^/api/token/refresh
+            pattern:  ^/api/token/
+            user_checker: App\Security\UserEnabledChecker
             stateless: true
             anonymous: true
         api:
@@ -45,9 +47,13 @@ security:
             stateless: true
             anonymous: true
             provider: db_provider
+            user_checker: App\Security\UserEnabledChecker
             guard:
+#                entry_point: lexik_jwt_authentication.jwt_token_authenticator
                 authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+#                    - lexik_jwt_authentication.jwt_token_authenticator
+                    - App\Security\TokenAuthenticator
+
             # activate different ways to authenticate
 
             # http_basic: true

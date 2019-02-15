@@ -39,7 +39,13 @@ class ResetPasswordAction
 
     public function __invoke(User $user)
     {
-        $this->validator->validate($user);
+        $errors = $this->validator->validate($user);
+        if (count($errors) > 0) {
+            return new JsonResponse([
+                'errors' => (string) $errors,
+            ]);
+        }
+        $user->setPasswordChangeData(time());
         $user->setPlainPassword($user->getNewPassword());
         $user->setPassword($this->passwordEncoder->encodePassword($user, $user->getPlainPassword()));
         $this->userRepository->save($user);

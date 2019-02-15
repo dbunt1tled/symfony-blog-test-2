@@ -122,7 +122,7 @@ class User implements UserInterface, \Serializable
     /**
      * @Assert\NotBlank(groups={"put-reset-password"})
      * @Assert\Expression(
-     *     "this.getNewPassword() === this.getNewRetypedPassword()",
+     *     "this.getNewPassword() == this.getNewRetypedPassword()",
      *     message="Passwords does not match",
      *     groups={"put-reset-password"}
      * )
@@ -172,11 +172,27 @@ class User implements UserInterface, \Serializable
      */
     private $comments;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $passwordChangeData;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $enabled;
+
+    /**
+     * @ORM\Column(type="string", length=40, nullable=true)
+     */
+    private $confirmationToken;
+
     public function __construct()
     {
         $this->blogPosts = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->roles = [self::ROLE_USER];
+        $this->enabled = false;
     }
 
     public function getId(): ?int
@@ -390,5 +406,58 @@ class User implements UserInterface, \Serializable
         $this->newRetypedPassword = $newRetypedPassword;
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPasswordChangeData(): ?int
+    {
+        return $this->passwordChangeData;
+    }
+
+    /**
+     * @param int $passwordChangeData
+     * @return User
+     */
+    public function setPasswordChangeData(int $passwordChangeData): self
+    {
+        $this->passwordChangeData = $passwordChangeData;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEnabled(): ?bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     * @return User
+     */
+    public function setEnabled(bool $enabled): self
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    public function getConfirmationToken(): ?string
+    {
+        return $this->confirmationToken;
+    }
+
+    /**
+     * @param string $confirmationToken
+     * @return User
+     */
+    public function setConfirmationToken(?string $confirmationToken): self
+    {
+        $this->confirmationToken = $confirmationToken;
+        return $this;
+    }
+
+
 
 }
