@@ -11,6 +11,9 @@
             "ref": "18727d8f229306860b46955f438e1897421da689"
         }
     },
+    "behat/transliterator": {
+        "version": "v1.2.0"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -110,6 +113,9 @@
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
+    "jms/metadata": {
+        "version": "1.7.0"
+    },
     "lcobucci/jwt": {
         "version": "3.2.5"
     },
@@ -121,6 +127,9 @@
             "version": "2.5",
             "ref": "509b1542f3180a1cfe248ade8b7bf5092c2d4127"
         }
+    },
+    "monolog/monolog": {
+        "version": "1.24.0"
     },
     "namshi/jose": {
         "version": "7.2.3"
@@ -266,6 +275,18 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/monolog-bridge": {
+        "version": "v4.2.3"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.1",
+            "ref": "18ebf5a940573a20de06f9c4060101eeb438cf3d"
+        }
+    },
     "symfony/options-resolver": {
         "version": "v4.2.3"
     },
@@ -335,6 +356,9 @@
             "ref": "3db029c03e452b4a23f7fc45cec7c922c2247eb8"
         }
     },
+    "symfony/templating": {
+        "version": "v4.2.3"
+    },
     "symfony/translation": {
         "version": "3.3",
         "recipe": {
@@ -385,6 +409,15 @@
     },
     "twig/twig": {
         "version": "v2.6.2"
+    },
+    "vich/uploader-bundle": {
+        "version": "1.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.5",
+            "ref": "c4f5755b37fb65b9c6a3cbdae91205c15a137ed4"
+        }
     },
     "webmozart/assert": {
         "version": "1.4.0"
