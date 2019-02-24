@@ -1,5 +1,56 @@
 easy_admin:
+    formats:
+        date: 'Y.m.d'
+        time: 'h:i A e'
+        datetime: 'Y.m.d'
     entities:
-      - App\Entity\BlogPost
-      - App\Entity\User
-      - App\Entity\Comment
+        BlogPost:
+            class: App\Entity\BlogPost
+            list:
+                actions: [ {name: 'Show'}]
+            show:
+                fields:
+                    - id
+                    - title
+                    - author
+                    - { property: 'comments', template: 'easy_admin/BlogPost/comments.html.twig' }
+                    - images
+                    - published
+            form:
+                fields:
+                    - id
+                    - title
+                    - author
+                    - content
+                    - images
+                    - published
+        User:
+            class: App\Entity\User
+            controller: App\Controller\Admin\UserAdminController
+            list:
+                fields:
+                    - id
+                    - name
+                    - email
+                    - roles
+                    - enabled
+            form:
+                fields:
+                    - id
+                    - name
+                    - email
+                    - plainPassword
+                    - roles
+                    - confirmationToken
+                    - enabled
+        Comment:
+            class: App\Entity\Comment
+        Image:
+            class: App\Entity\Image
+            list:
+                fields:
+                    - id
+                    - { property: 'url', type: 'image', label: 'Image' }
+            form:
+                fields:
+                    - { property: 'file', type: 'Vich\UploaderBundle\Form\Type\VichFileType', label: 'Image' }

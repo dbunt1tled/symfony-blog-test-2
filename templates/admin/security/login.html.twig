@@ -1,0 +1,17 @@
+<form action="{{ path('security_login') }}" method="post">
+    <div>
+        <div class="form-group">
+            <label for="username" class="form-control-label required">Username</label>
+            <input type="text" id="username" name="_username" required="required" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="password" class="form-control-label required">Password</label>
+            <input type="text" id="password" name="_password" required="required" class="form-control">
+        </div>
+        <div class="form-group">
+            <button type="submit" id="Login" name="Login" class="btn-secondary btn">Login</button>
+        </div>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+        <input type="hidden" name="_target_path" value="{{ app.request.get('redirect_to') }}" />
+    </div>
+</form>

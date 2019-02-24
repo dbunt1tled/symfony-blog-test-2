@@ -71,5 +71,8 @@ class Image
         $this->file = $file;
         return $this;
     }
-
+    public function __toString(): string
+    {
+        return (string)$this->getUrl();
+    }
 }
