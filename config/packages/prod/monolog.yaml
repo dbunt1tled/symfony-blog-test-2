@@ -1,5 +1,9 @@
 monolog:
     handlers:
+        db_logger:
+            type: service
+            id: db_logger
+            channels: ["db_logger"]
         main:
             type: fingers_crossed
             action_level: error

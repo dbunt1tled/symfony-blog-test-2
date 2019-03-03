@@ -7,8 +7,10 @@ namespace App\Controller;
 
 
 use App\Entity\BlogPost;
+use App\Events\BlogPostEvent;
 use App\Service\BlogPostService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,11 +26,14 @@ final class BlogController extends AbstractController
 {
     /** @var BlogPostService */
     private $blogPostService;
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
 
-    public function __construct(BlogPostService $blogPostService)
+    public function __construct(EventDispatcherInterface $dispatcher, BlogPostService $blogPostService)
     {
 
         $this->blogPostService = $blogPostService;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -95,7 +100,9 @@ final class BlogController extends AbstractController
     public function add(Request $request): JsonResponse
     {
         $blogPost = $this->blogPostService->newByRequest($request);
-        $this->blogPostService->save($blogPost);
+        //$this->blogPostService->save($blogPost);
+
+        $this->dispatcher->dispatch(BlogPostEvent::BLOG_POST_ADDED, new BlogPostEvent($blogPost));
         return $this->json($blogPost);
     }
 }

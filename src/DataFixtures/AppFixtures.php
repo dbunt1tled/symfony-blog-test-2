@@ -60,8 +60,15 @@ final class AppFixtures extends Fixture
             $manager->persist($user);
             $this->addReference($user->getUsername(),$user);
             $this->userReferences[] = $user->getUsername();
-
         }
+        $user = new User();
+        $user->setName($this->faker->unique()->firstName . ' ' .$this->faker->unique()->lastName)
+            ->setEmail('admin@bg.local')
+            ->setPlainPassword('12345678')
+            ->setPassword($this->passwordEncoder->encodePassword($user, $user->getPlainPassword()))
+            ->setEnabled(true)
+            ->setRoles([User::ROLE_ADMIN]);
+        $manager->persist($user);
     }
     public function loadPost(ObjectManager $manager, int $count = 5): void
     {

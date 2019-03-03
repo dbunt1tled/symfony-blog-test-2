@@ -33,5 +33,21 @@ services:
         arguments: ['@security.token_storage']
         tags:
             - {name: 'serializer.normalizer', priority: 64}
-    App\Security\UserConfirmationService:
+    db_logger:
+        class: App\Service\Logger\MonologORMHandler
+        public: true
+
+    monolog.processor.request:
+        class: App\Service\Logger\RequestProcessor
+        arguments: ['@request_stack', '@service_container']
+        tags:
+            - { name: monolog.processor, method: processRecord, handler: db_logger }
+
+    App\EventSubscriber\AbstractSubscriber:
         $logger: '@monolog.logger.token_confirmation'
+
+    App\EventSubscriber\BlogPostSubscriber:
+        $logger: '@monolog.logger.db_logger'
+
+    App\Security\UserConfirmationService:
+        $logger: '@monolog.logger.db_logger'

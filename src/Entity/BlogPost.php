@@ -16,6 +16,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiFilter(
@@ -78,7 +79,7 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
  * @UniqueEntity("slug")
  * @ORM\HasLifecycleCallbacks
  */
-class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
+final class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface, AggregateRoot
 {
     /**
      * @ORM\Id()
@@ -96,6 +97,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank()
      * @Groups({"post", "get-blog-post-with-author"})
      */
     private $content;
@@ -264,5 +266,10 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
     public function __toString(): string
     {
         return (string)$this->getTitle();
+    }
+
+    public function __toArray(): array
+    {
+        return get_object_vars($this);
     }
 }
