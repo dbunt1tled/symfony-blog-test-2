@@ -51,3 +51,8 @@ services:
 
     App\Security\UserConfirmationService:
         $logger: '@monolog.logger.db_logger'
+
+    App\EventListener\ExceptionListener:
+        tags:
+            - {name: kernel.event_listener, event: kernel.exception, priority: 1}
+        arguments: ['@api_platform.action.exception', '@monolog.logger', true]

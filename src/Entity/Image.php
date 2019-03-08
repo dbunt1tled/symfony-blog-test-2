@@ -10,7 +10,9 @@ use App\Controller\UploadImageAction;
 
 /**
  * @ApiResource(
- *     attributes={"order"={"id": "ASC"}},
+ *     attributes={
+ *          "order"={"id": "ASC"}
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post"={
@@ -51,7 +53,7 @@ class Image
 
     public function getUrl(): ?string
     {
-        return '/images/'.$this->url;
+        return $this->url;
     }
 
     public function setUrl(?string $url): self

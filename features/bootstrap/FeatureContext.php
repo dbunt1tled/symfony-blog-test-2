@@ -95,4 +95,12 @@ class FeatureContext extends RestContext
 
 
     }
+
+    /**
+     * @BeforeScenario @image
+     */
+    public function prepareImages()
+    {
+        copy(__DIR__ . '/../fixtures/Stewie.png', __DIR__ . '/../fixtures/files/Stewie.png');
+    }
 }
