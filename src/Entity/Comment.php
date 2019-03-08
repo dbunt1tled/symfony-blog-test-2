@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     collectionOperations={
  *      "get",
  *      "post" = {
- *              "access_control"="is_granted('ROLE_MODERATOR')"
+ *              "access_control"="is_granted('ROLE_USER')"
  *          },
  *      "api_blog_posts_comments_get_subresource" = {
  *              "normalization_context"={

@@ -79,7 +79,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity("slug")
  * @ORM\HasLifecycleCallbacks
  */
-final class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface, AggregateRoot
+class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface, AggregateRoot
 {
     /**
      * @ORM\Id()
