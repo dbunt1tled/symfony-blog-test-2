@@ -1,17 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
-import { createStore } from "redux";
+import { createStore, applyMiddleware} from "redux";
 import createHistory from 'history/createBrowserHistory';
 import { Provider } from 'react-redux';
 import { Router, Route } from 'react-router';
 
 import App from "./components/App";
+import reducer from "./reducer";
+import thunkMiddleware from 'redux-thunk';
 
-
-const store = createStore(
-    state => state
-);
+const store = createStore(reducer, applyMiddleware(thunkMiddleware));
 const history = createHistory();
 
 ReactDOM.render((
